@@ -5,7 +5,8 @@ import bodyParser from 'body-parser';
 import jwt from 'jsonwebtoken';
 // const userRoutes = require('./routes/userRoutes')
 import userRoutes from './routes/userRoutes.js';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import cors from 'cors';
 
 const router = express.Router();
 import config from './config.js';
@@ -13,6 +14,7 @@ import config from './config.js';
 
 
 const app = express();
+app.use(cors());
 
 app.get('/', (req,res) => {
     res.json('Ok');
@@ -23,7 +25,8 @@ router.post('/token',(req,res)=>{
     if(postData.refreshToken && postData.refreshToken in config.tokenList){
         const data = {
             "email":req.body.email,
-            "name":req.body.name
+            "password":req.body.name,
+            "isAdmin":true
         }
         const token = jwt.sign(data,config.tokenSecret,{expiresIn:config.tokenLife})
         const response = {

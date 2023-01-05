@@ -15,7 +15,8 @@ const login = asyncHandler(async(req,res)=>{
         let token = jwt.sign(data,config.tokenSecret,{expiresIn:config.tokenLife});
         let refreshToken = jwt.sign(data, config.refreshTokenSecret, {expiresIn:config.refreshTokenLife});
         const response = {
-            "status": "Logged in",
+            "status": true,
+            "data":data,
             "token": token,
             "refreshToken": refreshToken,
         }
@@ -25,9 +26,10 @@ const login = asyncHandler(async(req,res)=>{
         console.log("---------------");
         res.status(200).json(response);
     }else{
-        res.status(403).send("email and password required");
+        res.status(403).send({status:false,msg:"email and password required"});
     }
 })
+
 const getData = asyncHandler(async(req,res)=>{
     console.log(req);
     const data = [
