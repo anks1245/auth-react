@@ -13,11 +13,14 @@ axios.interceptors.request.use((request)=>{
   request.headers.Authorization="Bearer "+localStorage.getItem("accessToken")
 
   return request;
+},(error)=>{
+  console.log(error);
+  return error;
 })
 
 axios.interceptors.response.use((response)=>{
   console.log(response)
-  return response;
+  return {errStatus:false, resp:response};
 },(error)=>{
   console.log(error);
   let user = JSON.parse(localStorage.getItem("user"))
@@ -28,25 +31,39 @@ axios.interceptors.response.use((response)=>{
           isAdmin:true,
           refreshToken:localStorage.getItem("refreshToken")
       }).then(resp=>{
-          localStorage.removeItem('accessToken');
-          localStorage.setItem('accessToken',resp.data.token)
-          return resp;
+          console.log("1")
+          console.log(resp)
+          if(resp.errStatus == false){
+            localStorage.removeItem('accessToken');
+            localStorage.setItem('accessToken',resp.resp.data.token)
+            return {errStatus:false , resp:resp};
+          }else{
+            return {errStatus:true, resp:resp}
+          }
+          
+          
           // getData();
       }).catch(e=>{
+          console(e);
           if(e.response.status == 401){
+              console.log("2")
+              console.log(e)
               localStorage.clear();
               // alert('You have been logout!!... Plz Login Again')
               // navigate('/')
-              return e;
+              return {errStatus:true, resp:e};
           }else{
+              console.log("3");
               console.log(e.response.data);
-              return e;
+              return {errStatus:true, resp:e};
           }
       })
   }else{
+      console.log("4");
       console.log(error)
+      return  {errStatus:true, resp:error}
   }
-  return error;
+  // return error;
 })
 
 

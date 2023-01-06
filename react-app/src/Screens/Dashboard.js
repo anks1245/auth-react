@@ -30,14 +30,18 @@ const Dashboard = () =>{
             // {headers:{"Authorization":"Bearer "+localStorage.getItem("accessToken")}}
         ).then(data=>{
             console.log(data);
-            setDataArr(data.data.data)
+            if(data.errStatus == false){
+                setDataArr(data.resp.data.data)
+            }else{
+                getData()
+            }
         }).catch(err=>{
             console.log(err);
             // let user = JSON.parse(localStorage.getItem("user"))
             if(err.response.status == 401){
                 getData();
             }else{
-                console.log(err.response.data)
+                console.log(err)
             }
         })
     }
@@ -47,9 +51,11 @@ const Dashboard = () =>{
             <Layout>
                 <p>Hey Welcome, </p>
                 <Button onClick={(e)=>getData()}>Click Here to refresh</Button>
-                {dataArr.map(data=>{
+                {dataArr.map((data,index)=>{
                     return (
-                        <center><p key={data}>{data.name}</p></center>
+                        <div key={index+1}>
+                            <center><p>{data.name}</p></center>
+                        </div>
                     )
                 })}
                 
